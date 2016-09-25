@@ -65,7 +65,8 @@ app.factory('FcEvent', function(SimpleEvent) {
 	 */
 	function getEventRelatedProps (event) {
 		return {
-			title: event.getFirstPropertyValue('summary')
+			title: event.getFirstPropertyValue('summary'),
+			description: event.getFirstPropertyValue('description')
 		};
 	}
 

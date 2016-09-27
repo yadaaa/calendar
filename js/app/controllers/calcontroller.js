@@ -26,8 +26,8 @@
 * Description: The fullcalendar controller.
 */
 
-app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEventService', 'SettingsService', 'TimezoneService', 'VEvent', 'is', 'fc', 'EventsEditorDialogService', 'PopoverPositioningUtility',
-	function ($scope, Calendar, CalendarService, VEventService, SettingsService, TimezoneService, VEvent, is, fc, EventsEditorDialogService, PopoverPositioningUtility) {
+app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEventService', 'SettingsService', 'TimezoneService', 'VEvent', 'is', 'fc', 'EventsEditorDialogService', 'PopoverPositioningUtility', '$http', '$rootScope', '$uibModal',
+	function ($scope, Calendar, CalendarService, VEventService, SettingsService, TimezoneService, VEvent, is, fc, EventsEditorDialogService, PopoverPositioningUtility, $http, $rootScope, $uibModal) {
 		'use strict';
 
 		is.loading = true;
@@ -132,6 +132,38 @@ app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEven
 			// TODO - scope.apply should not be necessary here
 			$scope.$apply();
 		});
+
+		$scope.importFileById = function(id) {
+			return $http.get($rootScope.baseUrl + 'import', {
+				params: {
+					fileid: id
+				}
+			}).then(function(response) {
+				const fileName = response.data.name;
+				const fileBody = response.data.body;
+				let file = new File([fileBody], fileName, {type: 'text/calendar'});
+
+				$uibModal.open({
+					templateUrl: 'import.html',
+					controller: 'ImportController',
+					windowClass: 'import',
+					backdropClass: 'import-backdrop',
+					keyboard: false,
+					appendTo: angular.element('#importpopover-container'),
+					resolve: {
+						files: function () {
+							return [file];
+						}
+					},
+					scope: $scope
+				});
+			});
+		};
+
+		var hashParts = window.location.hash.substr(1).split('/');
+		if (!hashParts[0] && hashParts[1] === 'file' && hashParts[2]) {
+			$scope.importFileById(hashParts[2]);
+		}
 
 
 		/**

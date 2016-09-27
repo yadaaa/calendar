@@ -25,6 +25,7 @@ use OCA\Calendar\Controller;
 
 use OCP\AppFramework\App;
 use OCP\AppFramework\IAppContainer;
+use OCP\Files\Folder;
 
 class Application extends App {
 
@@ -60,6 +61,13 @@ class Application extends App {
 			$client = $c->getServer()->getHTTPClientService();
 
 			return new Controller\ProxyController($c->getAppName(), $request, $client);
+		});
+		$container->registerService('ImportController', function(IAppContainer $c) {
+			$request = $c->query('Request');
+			/** @var Folder $userFolder */
+			$rootFolder = $c->query('ServerContainer')->getRootFolder();
+
+			return new Controller\ImportController($c->getAppName(), $request, $rootFolder);
 		});
 	}
 

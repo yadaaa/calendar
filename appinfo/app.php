@@ -21,5 +21,16 @@
  */
 namespace OCA\Calendar\AppInfo;
 
+use OCP\User;
+use OCP\Util;
+
 $app = new Application();
 $app->registerNavigation();
+
+// only load text editor if the user is logged in
+if (User::isLoggedIn()) {
+	$eventDispatcher = \OC::$server->getEventDispatcher();
+	$eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
+		Util::addScript('calendar', 'public/registerUtility');
+	});
+}

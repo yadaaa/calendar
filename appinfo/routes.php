@@ -36,6 +36,10 @@ return [
 		['name' => 'contact#searchAttendee', 'url' => '/v1/autocompletion/attendee', 'verb' => 'GET'],
 		['name' => 'contact#searchLocation', 'url' => '/v1/autocompletion/location', 'verb' => 'GET'],
 
+		// WebCal
 		['name' => 'proxy#proxy', 'url' => '/v1/proxy', 'verb' => 'GET'],
+
+		// Import from Files
+		['name' => 'import#import', 'url' => '/v1/import', 'verb' => 'GET'],
 	]
 ];

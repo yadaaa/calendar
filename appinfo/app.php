@@ -21,15 +21,15 @@
  */
 namespace OCA\Calendar\AppInfo;
 
-use OCP\User;
 use OCP\Util;
 
 $app = new Application();
 $app->registerNavigation();
+$server = $app->getContainer()->getServer();
 
 // only load calendar action if the user is logged in
-if (User::isLoggedIn()) {
-	$eventDispatcher = $app->getContainer()->getServer()->getEventDispatcher();
+if ($server->getUserSession()->isLoggedIn()) {
+	$eventDispatcher = $server->getEventDispatcher();
 	$eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
 		Util::addScript('calendar', 'utility/registerUtility');
 	});

@@ -38,8 +38,5 @@ return [
 
 		// WebCal
 		['name' => 'proxy#proxy', 'url' => '/v1/proxy', 'verb' => 'GET'],
-
-		// Import from Files
-		['name' => 'import#import', 'url' => '/v1/import', 'verb' => 'GET'],
 	]
 ];

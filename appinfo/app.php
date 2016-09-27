@@ -27,7 +27,7 @@ use OCP\Util;
 $app = new Application();
 $app->registerNavigation();
 
-// only load text editor if the user is logged in
+// only load calendar action if the user is logged in
 if (User::isLoggedIn()) {
 	$eventDispatcher = \OC::$server->getEventDispatcher();
 	$eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {

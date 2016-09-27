@@ -26,8 +26,8 @@
 * Description: The fullcalendar controller.
 */
 
-app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEventService', 'SettingsService', 'TimezoneService', 'VEvent', 'is', 'fc', 'EventsEditorDialogService', 'PopoverPositioningUtility', '$http', '$rootScope', '$uibModal',
-	function ($scope, Calendar, CalendarService, VEventService, SettingsService, TimezoneService, VEvent, is, fc, EventsEditorDialogService, PopoverPositioningUtility, $http, $rootScope, $uibModal) {
+app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEventService', 'SettingsService', 'TimezoneService', 'VEvent', 'is', 'fc', 'EventsEditorDialogService', 'PopoverPositioningUtility', '$http', '$rootScope', '$uibModal', '$window',
+	function ($scope, Calendar, CalendarService, VEventService, SettingsService, TimezoneService, VEvent, is, fc, EventsEditorDialogService, PopoverPositioningUtility, $http, $rootScope, $uibModal, $window) {
 		'use strict';
 
 		is.loading = true;
@@ -133,14 +133,12 @@ app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEven
 			$scope.$apply();
 		});
 
-		$scope.importFileById = function(id) {
-			return $http.get($rootScope.baseUrl + 'import', {
-				params: {
-					fileid: id
-				}
-			}).then(function(response) {
-				const fileName = response.data.name;
-				const fileBody = response.data.body;
+		$scope.importFileByPath = function(path) {
+			return $http.get(
+				OC.linkToRemoteBase('dav') + '/files/' + OC.getCurrentUser().displayName + '/' + decodeURI(path)
+			).then(function(response) {
+				const fileName = decodeURIComponent(path);
+				const fileBody = response.data;
 				let file = new File([fileBody], fileName, {type: 'text/calendar'});
 
 				$uibModal.open({
@@ -160,9 +158,9 @@ app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEven
 			});
 		};
 
-		var hashParts = window.location.hash.substr(1).split('/');
-		if (!hashParts[0] && hashParts[1] === 'file' && hashParts[2]) {
-			$scope.importFileById(hashParts[2]);
+		var hashParts = $window.location.hash.substr(1).split('/');
+		if (!hashParts[0] && hashParts[1] === 'import' && hashParts[2]) {
+			$scope.importFileByPath(hashParts[2]);
 		}
 
 

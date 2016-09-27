@@ -29,7 +29,7 @@ $app->registerNavigation();
 
 // only load calendar action if the user is logged in
 if (User::isLoggedIn()) {
-	$eventDispatcher = \OC::$server->getEventDispatcher();
+	$eventDispatcher = $app->getContainer()->getServer()->getEventDispatcher();
 	$eventDispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
 		Util::addScript('calendar', 'public/registerUtility');
 	});

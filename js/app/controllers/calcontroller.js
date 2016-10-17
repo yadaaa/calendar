@@ -177,7 +177,7 @@ app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEven
 					fcEvent.title = t('calendar', 'New event');
 					fcEvent.className.push(fcEventClass);
 					fcEvent.writable = false;
-					fc.elm.fullCalendar('renderEvent', fcEvent);
+					fc.elm.fullCalendar('renderEvent', fcEvent, true);
 
 					EventsEditorDialogService.open($scope, fcEvent, function() {
 						const elements = angular.element('.' + fcEventClass);

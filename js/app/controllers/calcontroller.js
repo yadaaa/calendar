@@ -26,8 +26,8 @@
 * Description: The fullcalendar controller.
 */
 
-app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEventService', 'SettingsService', 'TimezoneService', 'VEvent', 'is', 'fc', 'EventsEditorDialogService', 'PopoverPositioningUtility', '$window',
-	function ($scope, Calendar, CalendarService, VEventService, SettingsService, TimezoneService, VEvent, is, fc, EventsEditorDialogService, PopoverPositioningUtility, $window) {
+app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEventService', 'SettingsService', 'TimezoneService', 'VEvent', 'is', 'fc', 'EventsEditorDialogService', 'PopoverPositioningUtility', '$window', '$interval',
+	function ($scope, Calendar, CalendarService, VEventService, SettingsService, TimezoneService, VEvent, is, fc, EventsEditorDialogService, PopoverPositioningUtility, $window, $interval) {
 		'use strict';
 
 		is.loading = true;
@@ -284,5 +284,9 @@ app.controller('CalController', ['$scope', 'Calendar', 'CalendarService', 'VEven
 					}
 				}
 		};
+
+		$interval(function() {
+			fc.elm.fullCalendar('refetchEvents');
+		}, 300000); //300000 = 1000 * 60 * 5
 	}
 ]);

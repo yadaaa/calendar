@@ -21,7 +21,7 @@
  *
  */
 
-app.factory('CalendarListItem', function(Calendar, WebCal) {
+app.factory('CalendarListItem', function($timeout, Calendar, WebCal) {
 	'use strict';
 
 	function CalendarListItem(calendar) {
@@ -31,7 +31,8 @@ app.factory('CalendarListItem', function(Calendar, WebCal) {
 			isEditingProperties: false,
 			isDisplayingCalDAVUrl: false,
 			isDisplayingWebCalUrl: false,
-			isSendingMail: false
+			isSendingMail: false,
+			isDeleted: false
 		};
 		const iface = {
 			_isACalendarListItemObject: true
@@ -131,6 +132,30 @@ app.factory('CalendarListItem', function(Calendar, WebCal) {
 
 		iface.isWebCal = function() {
 			return WebCal.isWebCal(context.calendar);
+		};
+
+		iface.isDeleted = function() {
+			return context.isDeleted;
+		};
+
+		iface.delete = function() {
+			return new Promise(function(resolve, reject) {
+				context.isDeleted = true;
+
+				const timeout = $timeout(function() {
+					if (context.isDeleted) {
+						resolve();
+					}
+				}, 7500);
+
+				const elm = OC.Notification.showTemporary(t('calendar', 'Undo deletion'));
+				angular.element(elm[0]).click(function() {
+					context.isDeleted = false;
+					OC.Notification.hide(elm);
+					$timeout.cancel(timeout);
+					reject('Deletion cancelled by user');
+				});
+			});
 		};
 
 		//Properties for ng-model of calendar editor

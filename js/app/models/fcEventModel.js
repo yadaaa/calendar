@@ -21,7 +21,7 @@
  *
  */
 
-app.factory('FcEvent', function(SimpleEvent) {
+app.factory('FcEvent', function($timeout, SimpleEvent) {
 	'use strict';
 
 	/**
@@ -33,6 +33,7 @@ app.factory('FcEvent', function(SimpleEvent) {
 	function FcEvent(vevent, event, start, end) {
 		const context = {vevent, event, start, end};
 		context.iCalEvent = new ICAL.Event(event);
+		context.isDeleted = false;
 
 		let id = context.vevent.uri;
 		if (event.hasProperty('recurrence-id')) {
@@ -135,17 +136,27 @@ app.factory('FcEvent', function(SimpleEvent) {
 		};
 
 		/**
-		 * lock fc event for editing
+		 * Show undo notification for deletion
+		 * @returns {Promise}
 		 */
-		iface.lock = function() {
-			context.lock = true;
-		};
+		iface.delete = function() {
+			return new Promise(function(resolve, reject) {
+				context.isDeleted = true;
 
-		/**
-		 * unlock fc event
-		 */
-		iface.unlock = function() {
-			context.lock = false;
+				const timeout = $timeout(function() {
+					if (context.isDeleted) {
+						resolve();
+					}
+				}, 7500);
+
+				const elm = OC.Notification.showTemporary(t('calendar', 'Undo deletion'));
+				angular.element(elm[0]).click(function() {
+					context.isDeleted = false;
+					OC.Notification.hide(elm);
+					$timeout.cancel(timeout);
+					reject('Deletion cancelled by user');
+				});
+			});
 		};
 
 		return iface;
